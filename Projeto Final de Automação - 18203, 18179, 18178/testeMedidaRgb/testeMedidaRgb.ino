@@ -18,7 +18,7 @@ void setup() {
 }
 
 void loop() {
-  /*if (!jaCalibrou)
+  if (!jaCalibrou)
   {
     //Calibrando o branco!   
     Serial.println("Calibrando o branco");   
@@ -50,18 +50,15 @@ void loop() {
     Serial.println("Sensor Calibrado");
     delay(3000);
     jaCalibrou = true;
-  }*/
+  }
   for (int i = 0; i < 3; i++)
   {
     digitalWrite(rgbLed[i], HIGH);
     delay(100);
     mediaSensor(5);
     rgb[i] = mediaLeituras;
-    /*float diffCinza = matrizBranco[i] - matrizPreto[i];
-    if (i == 2)
-      rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza)*240;
-    else
-      rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza)*255;*/
+    float diffCinza = matrizBranco[i] - matrizPreto[i];
+    rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza)*255;
     digitalWrite(rgbLed[i], LOW);
     delay(100);
   }
@@ -88,4 +85,3 @@ void mediaSensor(int n)
   }
   mediaLeituras = soma/n;
 }
-
