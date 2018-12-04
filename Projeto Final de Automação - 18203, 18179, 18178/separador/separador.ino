@@ -6,7 +6,7 @@
 #define rx 3
 #define tx 2
 #define pServo 6
-#define graus 1
+#define graus 22.5
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -14,13 +14,13 @@ SoftwareSerial bt(rx, tx);
 
 //Matriz de floats para armazenar o valor das cores e a angulacao correspondente
 float rgb[] = {0,0,0};
-float matrizBranco[] = {0,0,0}; 
+float matrizBranco[] = {0,0,0};
 float matrizPreto[] = {0,0,0};
 int angulacoes[] = {0, 0, 0, 0, 0, 0};
 
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
-int corAtual;
+int corAtual = 0;
 int estado = 1;
 boolean jaCalibrou = false;
 int rgbLed[] = {12, 13, 7};
@@ -32,7 +32,7 @@ void setup() {
   motor.setSpeed(50);
   servo.attach(pServo);
   Serial.begin(9600);
-  servo.write(55);
+  servo.write(60);
   bt.begin(38400);
 }
 
@@ -110,7 +110,7 @@ void lerValores()
     mediaSensor(5);
     rgb[i] = mediaLeituras;
     float diffCinza = matrizBranco[i] - matrizPreto[i];
-    rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza)*255;
+    rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza);
     digitalWrite(rgbLed[i], LOW);
     delay(100);
   }
@@ -150,15 +150,18 @@ void lerValores()
     //azul
     corAtual = 1;
   }
-  String aux = "" + corAtual;
-  Serial.println(aux);
-  motor.step(22 * 1); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  Serial.print(rgb[0]);
+  Serial.print(" ");
+  Serial.print(rgb[1]);
+  Serial.print(" ");
+  Serial.println(rgb[2]);
+  motor.step(corAtual); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
   servo.write(30);
   delay(850);
-  servo.write(55);
-  motor.step(180 - 22 * 1); //motor de passo volta a posicao inicial
+  servo.write(60);
+  motor.step(8 - corAtual); //motor de passo volta a posicao inicial
   delay(1500);
-  bt.println(aux);
+  bt.println(corAtual);
   bt.flush();
 }
