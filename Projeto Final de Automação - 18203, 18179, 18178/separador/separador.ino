@@ -6,7 +6,7 @@
 #define rx 3
 #define tx 2
 #define pServo 6
-#define graus 10
+#define graus 1
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -21,7 +21,7 @@ int angulacoes[] = {0, 0, 0, 0, 0, 0};
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
 int corAtual;
-int estado;
+int estado = 1;
 boolean jaCalibrou = false;
 int rgbLed[] = {12, 13, 7};
 
@@ -32,7 +32,7 @@ void setup() {
   motor.setSpeed(50);
   servo.attach(pServo);
   Serial.begin(9600);
-  servo.write(120);
+  servo.write(30);
   bt.begin(38400);
 }
 
@@ -70,7 +70,7 @@ void mediaSensor(int n)
 }
 void lerValores()
 {
-  if (jaCalibrou)
+  if (!jaCalibrou)
   {
     //Calibrando o branco!   
     Serial.println("Calibrando o branco");   
@@ -150,13 +150,13 @@ void lerValores()
     //azul
     corAtual = 1;
   }
-  motor.step(angulacoes[corAtual-1]); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  motor.step(22 * 1); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
   servo.write(30);
   delay(850);
   servo.write(55);
-  //motor.step(360-angulacoes[corAtual-1]); //motor de passo volta a posicao inicial
-  delay(500);
+  motor.step(180 - 22 * 1); //motor de passo volta a posicao inicial
+  delay(1500);
   String aux = corAtual + "";
   bt.println(aux);
   bt.flush();
