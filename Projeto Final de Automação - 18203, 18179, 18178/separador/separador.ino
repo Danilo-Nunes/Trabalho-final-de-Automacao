@@ -32,7 +32,7 @@ void setup() {
   motor.setSpeed(50);
   servo.attach(pServo);
   Serial.begin(9600);
-  servo.write(30);
+  servo.write(55);
   bt.begin(38400);
 }
 
@@ -150,6 +150,8 @@ void lerValores()
     //azul
     corAtual = 1;
   }
+  String aux = "" + corAtual;
+  Serial.println(aux);
   motor.step(22 * 1); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
   servo.write(30);
@@ -157,7 +159,6 @@ void lerValores()
   servo.write(55);
   motor.step(180 - 22 * 1); //motor de passo volta a posicao inicial
   delay(1500);
-  String aux = corAtual + "";
   bt.println(aux);
   bt.flush();
 }
