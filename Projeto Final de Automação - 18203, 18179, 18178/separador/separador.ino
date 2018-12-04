@@ -152,24 +152,12 @@ void lerValores()
   }
   motor.step(angulacoes[corAtual-1]); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
-  //faz a rampa cair
-  //rampa sobe de novo
-  motor.step(360-angulacoes[corAtual-1]); //motor de passo volta a posicao inicial
+  servo.write(30);
+  delay(850);
+  servo.write(55);
+  //motor.step(360-angulacoes[corAtual-1]); //motor de passo volta a posicao inicial
   delay(500);
   String aux = corAtual + "";
   bt.println(aux);
   bt.flush();
 }
-//void setupBlueToothConnection()
-//{
-//  bt.begin(9600);
-//  bt.print("\r\n+STWMOD=0\r\n"); //set the bluetooth work in slave mode
-//  bt.print("\r\n+STNA=HC-05\r\n"); //set the bluetooth name as "SeeedBTSlave"
-//  bt.print("\r\n+STOAUT=1\r\n"); // Permit Paired device to connect me
-//  bt.print("\r\n+STAUTO=0\r\n"); // Auto-connection should be forbidden here
-//  delay(2000); // This delay is required.
-//  bt.print("\r\n+INQ=1\r\n"); //make the slave bluetooth inquirable 
-//  Serial.println("The slave bluetooth is inquirable!");
-//  delay(2000); // This delay is required.
-//  bt.flush();
-//}
