@@ -45,10 +45,9 @@ void loop() {
   {
     lerValores();
   }
-  if (estado == 2)
+  if (estado == 2 && bt.available() > 0)
   {
-    while((bt.available() > 0)&&(estado == 2))
-      estado = bt.readString().toInt();
+    estado = bt.readString().toInt();
   }
   if (estado == 3)
   {
@@ -105,31 +104,26 @@ void lerValores()
   }
   for (int i = 0; i < 3; i++)
   {
-    digitalWrite(rgbLed[i], HIGH);
-    delay(100);
-    mediaSensor(5);
-    rgb[i] = mediaLeituras;
-    float diffCinza = matrizBranco[i] - matrizPreto[i];
-    rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza);
-    digitalWrite(rgbLed[i], LOW);
-    delay(100);
+      digitalWrite(rgbLed[i], HIGH);
+      delay(100);
+      mediaSensor(5);
+      rgb[i] = mediaLeituras;
+      float diffCinza = matrizBranco[i] - matrizPreto[i];
+      rgb[i] = (rgb[i] - matrizPreto[i])/(diffCinza)*255;
+      digitalWrite(rgbLed[i], LOW);
+      delay(100);
   }
   //rgb[0] - red
   //rgb[1] - green
   //rgb[2] - blue
   if (rgb[0] > rgb[1] && rgb[0] > rgb[2]) //se o vermelhor for o maior de todos, a cor do m&m pode ser: vermelho, laranja, amarelo ou marrom
   {
-    if (rgb[0] < 100) //se o vermelho for muito baixo, o m&m é marrom
-    {
-      //marrom
-      corAtual = 4;
-    }
-    else if (rgb[0] - rgb[1] < 50) //se a diferenca entre o vermelho e o verde for pequena, é amarelo
+    if (rgb[0] - rgb[1] < 30) //se a diferenca entre o vermelho e o verde for pequena, é amarelo
     {
       //amarelo
       corAtual = 2;
     }
-    else if (rgb[0] - rgb[1]*2 < 50) //se o verde for mais ou menos metade do vermelho, é laranja
+    else if (rgb[0] - rgb[1] > 30 && rgb[0] - rgb[1] < 30) //se o verde for mais ou menos metade do vermelho, é laranja
     {
       //laranja
       corAtual = 3;
@@ -147,6 +141,11 @@ void lerValores()
   }
   else //se o azul for o maior, o m&m é azul
   {
+    if (rgb[2] < 180) //se o azul for muito baixo, foi constatado que eh marrom
+    {
+      //marrom
+      corAtual = 4;
+    }
     //azul
     corAtual = 1;
   }
@@ -155,12 +154,12 @@ void lerValores()
   Serial.print(rgb[1]);
   Serial.print(" ");
   Serial.println(rgb[2]);
-  motor.step(corAtual); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  //motor.step(corAtual); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
-  servo.write(30);
+  //servo.write(30);
   delay(850);
-  servo.write(60);
-  motor.step(8 - corAtual); //motor de passo volta a posicao inicial
+  //servo.write(60);
+  //motor.step(8 - corAtual); //motor de passo volta a posicao inicial
   delay(1500);
   bt.println(corAtual);
   bt.flush();
