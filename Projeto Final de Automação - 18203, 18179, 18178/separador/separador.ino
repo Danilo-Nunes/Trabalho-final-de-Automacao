@@ -6,7 +6,8 @@
 #define rx 3
 #define tx 2
 #define pServo 6
-#define graus 22.5
+#define graus 50
+#define ang 50
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -29,10 +30,10 @@ void setup() {
   for (int i = 0; i < 3; i++)
     pinMode(rgbLed[i], OUTPUT);
   pinMode(ldr, INPUT);
-  motor.setSpeed(50);
+  motor.setSpeed(3000);
   servo.attach(pServo);
   Serial.begin(9600);
-  servo.write(60);
+  servo.write(ang);
   bt.begin(38400);
 }
 
@@ -116,50 +117,26 @@ void lerValores()
   //rgb[0] - red
   //rgb[1] - green
   //rgb[2] - blue
-  if (rgb[0] > rgb[1] && rgb[0] > rgb[2]) //se o vermelhor for o maior de todos, a cor do m&m pode ser: vermelho, laranja, amarelo ou marrom
+  if (rgb[0] > rgb[1] && rgb[0] > rgb[2]) //se o vermelhor for o maior de todos, a cor do m&m pode ser: vermelho, laranja ou amarelo
   {
-    if (rgb[0] - rgb[1] < 30) //se a diferenca entre o vermelho e o verde for pequena, é amarelo
-    {
-      //amarelo
-      corAtual = 2;
-    }
-    else if (rgb[0] - rgb[1] > 30 && rgb[0] - rgb[1] < 30) //se o verde for mais ou menos metade do vermelho, é laranja
-    {
-      //laranja
-      corAtual = 3;
-    }
-    else //se o verde for muito pequeno, é vermelho
-    {
-      //vermelho
-      corAtual = 6;
-    }
-  }
-  else if (rgb[1] > rgb[0] && rgb[1] > rgb[2]) // se o verde for o maior, o m&m é verde
-  {
-    //verde
-    corAtual = 5;
-  }
-  else //se o azul for o maior, o m&m é azul
-  {
-    if (rgb[2] < 180) //se o azul for muito baixo, foi constatado que eh marrom
-    {
-      //marrom
-      corAtual = 4;
-    }
-    //azul
     corAtual = 1;
+  }
+  else if ((rgb[1] > rgb[0] && rgb[1] > rgb[2])|| (rgb[2] > rgb[0] && rgb[2] > rgb[1])) // se o verde for o maior, o m&m é verde
+  {
+    //cor fria
+    corAtual = 2;
   }
   Serial.print(rgb[0]);
   Serial.print(" ");
   Serial.print(rgb[1]);
   Serial.print(" ");
   Serial.println(rgb[2]);
-  //motor.step(corAtual); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  motor.step(270 + (corAtual * 150)); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
-  //servo.write(30);
+  servo.write(25);
   delay(850);
-  //servo.write(60);
-  //motor.step(8 - corAtual); //motor de passo volta a posicao inicial
+  servo.write(ang);
+  motor.step(90 - (corAtual * 150)); //motor de passo volta a posicao inicial
   delay(1500);
   bt.println(corAtual);
   bt.flush();
