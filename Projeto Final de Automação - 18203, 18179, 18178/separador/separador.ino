@@ -3,11 +3,11 @@
 #include <Servo.h>
 
 #define ldr A0
-#define rx 3
-#define tx 2
+#define rx 1
+#define tx 0
 #define pServo 6
 #define graus 50
-#define ang 50
+#define ang 45 
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -34,7 +34,7 @@ void setup() {
   servo.attach(pServo);
   Serial.begin(9600);
   servo.write(ang);
-  bt.begin(38400);
+  bt.begin(9600);
 }
 
 void loop() {
@@ -46,9 +46,9 @@ void loop() {
   {
     lerValores();
   }
-  if (estado == 2)
+  if (estado == 2 && bt.available() > 0)
   {
-    //já que está pausado, não acontece nada
+    estado = bt.readString().toInt();
   }
   if (estado == 3)
   {
@@ -131,12 +131,12 @@ void lerValores()
   Serial.print(rgb[1]);
   Serial.print(" ");
   Serial.println(rgb[2]);
-  motor.step(270 + (corAtual * 150)); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  motor.step(270 + (corAtual==1?110:300)); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   delay(1000);
   servo.write(25);
   delay(850);
   servo.write(ang);
-  motor.step(1803 - (270 + (corAtual * 150))); //motor de passo volta a posicao inicial
+  motor.step(1800 - (270 + (150 * corAtual))); //motor de passo volta a posicao inicial
   delay(1500);
   bt.println(corAtual);
   bt.flush();
