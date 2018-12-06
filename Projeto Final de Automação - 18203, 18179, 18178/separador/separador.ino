@@ -7,7 +7,7 @@
 #define tx 3
 #define pServo 6
 #define graus 50
-#define ang 45
+#define ang 50
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -15,8 +15,8 @@ SoftwareSerial bt(rx, tx);
 
 //Matriz de floats para armazenar o valor das cores e a angulacao correspondente
 float rgb[] = {0,0,0};
-float matrizBranco[] = {0,0,0};
-float matrizPreto[] = {0,0,0};
+float matrizBranco[] = {551,465,244};
+float matrizPreto[] = {283,213,76};
 int angulacoes[] = {0, 0, 0, 0, 0, 0};
 
 //Variável para armazenar a média das leitura e da cor do m&m atual
@@ -44,7 +44,6 @@ void loop() {
   }
   if (estado == '1')
   {
-    Serial.println("fsdfds");
     lerValores();
   }
   if (estado == '2')
@@ -71,7 +70,7 @@ void mediaSensor(int n)
 }
 void lerValores()
 {
-  if (!jaCalibrou)
+  if (jaCalibrou)
   {
     //Calibrando o branco!   
     Serial.println("Calibrando o branco");   
@@ -88,7 +87,7 @@ void lerValores()
     
     //Calibrando o preto!   
     Serial.println("Calibrando o preto");   
-    delay(5000);   
+    delay(10000);   
     for (int i = 0; i < 3; i++)
     {     
       digitalWrite(rgbLed[i],HIGH);     
@@ -103,6 +102,18 @@ void lerValores()
     Serial.println("Sensor Calibrado");
     delay(3000);
     jaCalibrou = true;
+    Serial.print("Branco: ");
+    Serial.print(matrizBranco[0]);
+    Serial.print(" ");
+    Serial.print(matrizBranco[1]);
+    Serial.print(" ");
+    Serial.println(matrizBranco[2]);
+    Serial.print("preto: ");
+    Serial.print(matrizPreto[0]);
+    Serial.print(" ");
+    Serial.print(matrizPreto[1]);
+    Serial.print(" ");
+    Serial.println(matrizPreto[2]);
   }
   for (int i = 0; i < 3; i++)
   {
@@ -137,7 +148,7 @@ void lerValores()
   servo.write(25);
   delay(850);
   servo.write(ang);
-  motor.step(1800 - (270 + (150 * corAtual))); //motor de passo volta a posicao inicial
+  motor.step(1830 - (270 + (150 * corAtual))); //motor de passo volta a posicao inicial
   delay(1500);
   bt.println(corAtual);
   bt.flush();
