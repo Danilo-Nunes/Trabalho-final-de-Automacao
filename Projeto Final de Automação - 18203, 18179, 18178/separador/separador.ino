@@ -22,7 +22,7 @@ int angulacoes[] = {0, 0, 0, 0, 0, 0};
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
 int corAtual = 0;
-int estado = 1;
+int estado = 2;
 boolean jaCalibrou = false;
 int rgbLed[] = {12, 13, 7};
 
@@ -40,15 +40,15 @@ void setup() {
 void loop() {
   if (bt.available() > 0)
   {
-    estado = bt.readString().toInt();
+    estado = bt.read();
   }
   if (estado == 1)
   {
     lerValores();
   }
-  if (estado == 2 && bt.available() > 0)
+  if (estado == 2)
   {
-    estado = bt.readString().toInt();
+    //já que está pausado, não acontece nada
   }
   if (estado == 3)
   {
@@ -136,7 +136,7 @@ void lerValores()
   servo.write(25);
   delay(850);
   servo.write(ang);
-  motor.step(90 - (corAtual * 150)); //motor de passo volta a posicao inicial
+  motor.step(1803 - (270 + (corAtual * 150))); //motor de passo volta a posicao inicial
   delay(1500);
   bt.println(corAtual);
   bt.flush();
