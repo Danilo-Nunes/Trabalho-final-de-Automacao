@@ -3,11 +3,11 @@
 #include <Servo.h>
 
 #define ldr A0
-#define rx 1
-#define tx 0
+#define rx 2
+#define tx 3
 #define pServo 6
 #define graus 50
-#define ang 45 
+#define ang 45
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -22,7 +22,7 @@ int angulacoes[] = {0, 0, 0, 0, 0, 0};
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
 int corAtual = 0;
-int estado = 2;
+char estado = 0;
 boolean jaCalibrou = false;
 int rgbLed[] = {12, 13, 7};
 
@@ -38,19 +38,20 @@ void setup() {
 }
 
 void loop() {
-  if (bt.available() > 0)
+  if (bt.available())
   {
     estado = bt.read();
   }
-  if (estado == 1)
+  if (estado == '1')
   {
+    Serial.println("fsdfds");
     lerValores();
   }
-  if (estado == 2 && bt.available() > 0)
+  if (estado == '2')
   {
-    estado = bt.readString().toInt();
+    //já que está pausado, não acontece nada
   }
-  if (estado == 3)
+  if (estado == '3')
   {
     return;
   }
