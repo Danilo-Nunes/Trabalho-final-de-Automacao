@@ -19,14 +19,14 @@ float matrizBranco[] = {364,346,174};
 float matrizPreto[] = {150,155,96};
 int mov = 0;
 int retorno = 0;
-String printBt;
 
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
 int corAtual = 0;
-char estado = 0;
+String estado = "";
 boolean jaCalibrou = false;
 int rgbLed[] = {12, 13, 7};
+boolean enviar = false;
 
 void setup() {
   for (int i = 0; i < 3; i++)
@@ -42,19 +42,15 @@ void setup() {
 void loop() {
   if (bt.available())
   {
-    estado = bt.read();
+    estado = bt.readString();
   }
-  if (estado == '1')
+  if (estado == "1")
   {
     lerValores();
   }
-  if (estado == '2')
+  else
   {
-    //já que está pausado, não acontece nada
-  }
-  if (estado == '3')
-  {
-    //
+    //já que está pausado ou parado, não acontece nada
   }
 }
 
@@ -133,9 +129,10 @@ void lerValores()
   //rgb[2] - blue
   if (rgb[0] > rgb[1] && rgb[0] > rgb[2]) //se o vermelhor for o maior de todos, a cor do m&m pode ser: vermelho, laranja ou amarelo
   {
+    //cor quente
     corAtual = 1;
   }
-  else if ((rgb[1] > rgb[0] && rgb[1] > rgb[2])|| (rgb[2] > rgb[0] && rgb[2] > rgb[1])) // se o verde for o maior, o m&m é verde
+  else // se o verde ou azul for o maior, o m&m tem uma cor fria
   {
     //cor fria
     corAtual = 2;
@@ -145,18 +142,21 @@ void lerValores()
   Serial.print(rgb[1]);
   Serial.print(" ");
   Serial.println(rgb[2]);
+  if (enviar)
+  {
+    bt.println(corAtual);
+    bt.flush();
+  }
   mov = 300 + (corAtual==1?130:300);
   motor.step(mov); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
   //delay(1000);
-  servo.write(25);
+  servo.write(15);
   delay(850);
   servo.write(ang);
-  retorno = 1800 - mov;
+  retorno = 1790 - mov;
   motor.step(retorno); //motor de passo volta a posicao inicial
   //delay(1500);
-  printBt = corAtual + ""; //converte a cor atual para uma string
-  bt.println(printBt);
-  bt.flush();
   mov = 0;
   retorno = 0;
+  enviar = true;
 }
