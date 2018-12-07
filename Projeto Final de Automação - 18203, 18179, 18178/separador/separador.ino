@@ -1,13 +1,13 @@
 #include <SoftwareSerial.h>
 #include <Stepper.h>
 #include <Servo.h>
-
+//constantes para as entradas
 #define ldr A0
 #define rx 2
 #define tx 3
-#define pServo 6
+#define pinoServo 6
 #define graus 50
-#define ang 50
+#define ang 55
 
 Servo servo;
 Stepper motor(360/graus, 8, 10, 9, 11);
@@ -15,9 +15,11 @@ SoftwareSerial bt(rx, tx);
 
 //Matriz de floats para armazenar o valor das cores e a angulacao correspondente
 float rgb[] = {0,0,0};
-float matrizBranco[] = {551,465,244};
-float matrizPreto[] = {283,213,76};
-int angulacoes[] = {0, 0, 0, 0, 0, 0};
+float matrizBranco[] = {364,346,174};
+float matrizPreto[] = {150,155,96};
+int mov = 0;
+int retorno = 0;
+String printBt;
 
 //Variável para armazenar a média das leitura e da cor do m&m atual
 int mediaLeituras;
@@ -30,8 +32,8 @@ void setup() {
   for (int i = 0; i < 3; i++)
     pinMode(rgbLed[i], OUTPUT);
   pinMode(ldr, INPUT);
-  motor.setSpeed(3000);
-  servo.attach(pServo);
+  motor.setSpeed(500);
+  servo.attach(pinoServo);
   Serial.begin(9600);
   servo.write(ang);
   bt.begin(9600);
@@ -52,7 +54,7 @@ void loop() {
   }
   if (estado == '3')
   {
-    return;
+    //
   }
 }
 
@@ -143,13 +145,18 @@ void lerValores()
   Serial.print(rgb[1]);
   Serial.print(" ");
   Serial.println(rgb[2]);
-  motor.step(270 + (corAtual==1?110:300)); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
-  delay(1000);
+  mov = 300 + (corAtual==1?130:300);
+  motor.step(mov); //gira o motor de passo com a angulacao desejada de acordo com a cor do m&m
+  //delay(1000);
   servo.write(25);
   delay(850);
   servo.write(ang);
-  motor.step(1830 - (270 + (150 * corAtual))); //motor de passo volta a posicao inicial
-  delay(1500);
-  bt.println(corAtual);
+  retorno = 1800 - mov;
+  motor.step(retorno); //motor de passo volta a posicao inicial
+  //delay(1500);
+  printBt = corAtual + ""; //converte a cor atual para uma string
+  bt.println(printBt);
   bt.flush();
+  mov = 0;
+  retorno = 0;
 }
